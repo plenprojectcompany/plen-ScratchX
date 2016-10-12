@@ -60,3 +60,5 @@ Temporary Items
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
+
+script.js

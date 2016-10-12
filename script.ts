@@ -1,4 +1,6 @@
-(function(ext) {
+var ScratchExtensions: any
+
+(function(ext: any) {
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {};
 

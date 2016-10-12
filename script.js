@@ -62,6 +62,52 @@ var PLENControlServer = (function () {
             });
         }
     };
+    PLENControlServer.prototype.play = function (slot, success_callback) {
+        var _this = this;
+        if (success_callback === void 0) { success_callback = null; }
+        if (this._state === SERVER_STATE.CONNECTED) {
+            this._state = SERVER_STATE.WAITING;
+            this.$http.get("//" + this._ip_addr + "/v2/motions/" + slot.toString() + "/play")
+                .success(function (response) {
+                _this._state = SERVER_STATE.CONNECTED;
+                if (response.data.result === true) {
+                    if (!(success_callback == null)) {
+                        success_callback();
+                    }
+                }
+                else {
+                    _this._state = SERVER_STATE.DISCONNECTED;
+                    alert("USB connection was disconnected!");
+                }
+            })
+                .error(function () {
+                _this._state = SERVER_STATE.DISCONNECTED;
+            });
+        }
+    };
+    PLENControlServer.prototype.stop = function (success_callback) {
+        var _this = this;
+        if (success_callback === void 0) { success_callback = null; }
+        if (this._state === SERVER_STATE.CONNECTED) {
+            this._state = SERVER_STATE.WAITING;
+            this.$http.get("//" + this._ip_addr + "/v2/motions/stop")
+                .success(function (response) {
+                _this._state = SERVER_STATE.CONNECTED;
+                if (response.data.result === true) {
+                    if (!(success_callback == null)) {
+                        success_callback();
+                    }
+                }
+                else {
+                    _this._state = SERVER_STATE.DISCONNECTED;
+                    alert("USB connection was disconnected!");
+                }
+            })
+                .error(function () {
+                _this._state = SERVER_STATE.DISCONNECTED;
+            });
+        }
+    };
     PLENControlServer.prototype.applyNative = function (device, value) {
         if (this._state === SERVER_STATE.CONNECTED) {
             this._socket.send('apply/' + device + '/' + value.toString());
@@ -132,9 +178,7 @@ var ScratchExtensions;
         return { status: 2, msg: 'Ready' };
     };
     ext.forward = function (server) {
-        $.getJSON("https://raw.githubusercontent.com/plenprojectcompany/PLEN2/master/motions/46_Walk_Forward.json", function (data) {
-            server.install(data);
-        });
+        server.play(46);
     };
     ext.connect = function (server) {
         server.connect();

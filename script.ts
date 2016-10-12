@@ -15,9 +15,7 @@ var ScratchExtensions: any
     };
 
     ext.forward = function(server: PLENControlServer) {
-        $.getJSON("https://raw.githubusercontent.com/plenprojectcompany/PLEN2/master/motions/46_Walk_Forward.json", function(data: any) {
-            server.install(data);
-        });
+        server.play(46);
     }; 
     
     ext.connect = function(server: PLENControlServer) {

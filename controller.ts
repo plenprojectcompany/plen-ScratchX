@@ -87,19 +87,23 @@ class PLENControlServer
         }
     }
     
-        play(slot: number, success_callback = null): void
+    play(slot: number, success_callback = null): void
     {
+        console.log("begin to play");
         if (this._state === SERVER_STATE.CONNECTED)
         {
             this._state = SERVER_STATE.WAITING;
+            console.log("successfully connected to play");
 
             this.$http.get("//" + this._ip_addr + "/v2/motions/" + slot.toString() + "/play")
                 .success((response: any) =>
                 {
+                    console.log("ok");
                     this._state = SERVER_STATE.CONNECTED;
 
                     if (response.data.result === true)
                     {
+                        console.log("successfully played");
                         if (!(success_callback == null))
                         {
                             success_callback();
@@ -201,7 +205,8 @@ class PLENControlServer
             this._socket.close();
             this._socket = null;
         }
-
+            
+        console.log("begin to connect websocket");
         this._socket = new WebSocket('ws://' + this._ip_addr + '/v2/cmdstream');
 
         this._socket.onopen = () =>
@@ -209,6 +214,7 @@ class PLENControlServer
             if (this._socket.readyState === WebSocket.OPEN)
             {
                 this._state = SERVER_STATE.CONNECTED;
+                console.log("successfully connected")
             }
         };
 

@@ -65,12 +65,16 @@ var PLENControlServer = (function () {
     PLENControlServer.prototype.play = function (slot, success_callback) {
         var _this = this;
         if (success_callback === void 0) { success_callback = null; }
+        console.log("begin to play");
         if (this._state === SERVER_STATE.CONNECTED) {
             this._state = SERVER_STATE.WAITING;
+            console.log("successfully connected to play");
             this.$http.get("//" + this._ip_addr + "/v2/motions/" + slot.toString() + "/play")
                 .success(function (response) {
+                console.log("ok");
                 _this._state = SERVER_STATE.CONNECTED;
                 if (response.data.result === true) {
+                    console.log("successfully played");
                     if (!(success_callback == null)) {
                         success_callback();
                     }
@@ -142,10 +146,12 @@ var PLENControlServer = (function () {
             this._socket.close();
             this._socket = null;
         }
+        console.log("begin to connect websocket");
         this._socket = new WebSocket('ws://' + this._ip_addr + '/v2/cmdstream');
         this._socket.onopen = function () {
             if (_this._socket.readyState === WebSocket.OPEN) {
                 _this._state = SERVER_STATE.CONNECTED;
+                console.log("successfully connected");
             }
         };
         this._socket.onmessage = function (event) {

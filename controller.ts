@@ -86,6 +86,70 @@ class PLENControlServer
                 });
         }
     }
+    
+        play(slot: number, success_callback = null): void
+    {
+        if (this._state === SERVER_STATE.CONNECTED)
+        {
+            this._state = SERVER_STATE.WAITING;
+
+            this.$http.get("//" + this._ip_addr + "/v2/motions/" + slot.toString() + "/play")
+                .success((response: any) =>
+                {
+                    this._state = SERVER_STATE.CONNECTED;
+
+                    if (response.data.result === true)
+                    {
+                        if (!(success_callback == null))
+                        {
+                            success_callback();
+                        }
+                    }
+                    else
+                    {
+                        this._state = SERVER_STATE.DISCONNECTED;
+
+                        alert("USB connection was disconnected!");
+                    }
+                })
+                .error(() =>
+                {
+                    this._state = SERVER_STATE.DISCONNECTED;
+                });
+        }
+    }
+
+    stop(success_callback = null): void
+    {
+        if (this._state === SERVER_STATE.CONNECTED)
+        {
+            this._state = SERVER_STATE.WAITING;
+
+            this.$http.get("//" + this._ip_addr + "/v2/motions/stop")
+                .success((response: any) =>
+                {
+                    this._state = SERVER_STATE.CONNECTED;
+
+                    if (response.data.result === true)
+                    {
+                        if (!(success_callback == null))
+                        {
+                            success_callback();
+                        }
+                    }
+                    else
+                    {
+                        this._state = SERVER_STATE.DISCONNECTED;
+
+                        alert("USB connection was disconnected!");
+                    }
+                })
+                .error(() =>
+                {
+                    this._state = SERVER_STATE.DISCONNECTED;
+                });
+        }
+    }
 
     applyNative(device: string, value: number): void
     {

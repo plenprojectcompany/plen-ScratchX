@@ -19,12 +19,17 @@ var ScratchExtensions: any
             server.install(data);
         });
     }; 
+    
+    ext.connect = function(server: PLENControlServer) {
+        server.connect();
+    }
 
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
             // block type, block name, function name
-            [' ', 'forward', 'forward', server]
+            [' ', 'forward', 'forward', server],
+            [' ', 'connect', 'connet', server]
         ]
     };
 

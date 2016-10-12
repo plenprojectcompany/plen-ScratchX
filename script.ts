@@ -17,7 +17,7 @@ var ScratchExtensions: any
     ext.forward = function() {
         console.log("forward");
         console.log(server);
-        server.play(46);
+        server.play(70);
     }; 
     
     ext.connect = function() {

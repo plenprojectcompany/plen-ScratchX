@@ -1,5 +1,7 @@
+/// <reference path="controller.ts"/>
 var ScratchExtensions;
 (function (ext) {
+    var server = new PLENControlServer($);
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () { };
     // Status reporting code
@@ -7,13 +9,16 @@ var ScratchExtensions;
     ext._getStatus = function () {
         return { status: 2, msg: 'Ready' };
     };
-    ext.forward = function () {
+    ext.forward = function (server) {
+        $.getJSON("https://raw.githubusercontent.com/plenprojectcompany/PLEN2/master/motions/46_Walk_Forward.json", function (data) {
+            server.install(data);
+        });
     };
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
             // block type, block name, function name
-            [' ', 'forward', 'forward']
+            [' ', 'forward', 'forward', server]
         ]
     };
     // Register the extension

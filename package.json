@@ -1,0 +1,23 @@
+{
+  "name": "plenscratch",
+  "version": "0.0.0",
+  "description": "",
+  "main": "motion_schema.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tatsukawa/plen-Scratch.git"
+  },
+  "author": "Tsuyoshi TATSUKAWA",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tatsukawa/plen-Scratch/issues"
+  },
+  "homepage": "https://github.com/tatsukawa/plen-Scratch#readme",
+  "dependencies": {
+      "lodash": "^4.14.2",
+      "rxjs": "^5.0.0-rc.1"
+  }
+}

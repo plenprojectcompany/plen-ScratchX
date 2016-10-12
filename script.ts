@@ -10,9 +10,15 @@ var ScratchExtensions: any
         return {status: 2, msg: 'Ready'};
     };
 
+    ext.forward = function() {
+        
+    }; 
+
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
+            // block type, block name, function name
+            [' ', 'forward', 'forward']
         ]
     };
 

@@ -184,9 +184,11 @@ var ScratchExtensions;
         return { status: 2, msg: 'Ready' };
     };
     ext.forward = function (server) {
+        console.log("forward");
         server.play(46);
     };
     ext.connect = function (server) {
+        console.log("connect");
         server.connect();
     };
     // Block and block menu descriptions

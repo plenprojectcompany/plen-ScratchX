@@ -15,10 +15,14 @@ var ScratchExtensions: any
     };
 
     ext.forward = function(server: PLENControlServer) {
+        console.log("forward");
+        console.log(server);
         server.play(46);
     }; 
     
     ext.connect = function(server: PLENControlServer) {
+        console.log("connect");
+        console.log(server);
         server.connect();
     }
 

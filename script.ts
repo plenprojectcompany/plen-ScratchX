@@ -4,7 +4,7 @@ var ScratchExtensions: any
 
 (function(ext: any) {
     var server = new PLENControlServer($);
-
+    console.log(server)
     // Cleanup function when the extension is unloaded
     ext._shutdown = function() {};
 

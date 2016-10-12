@@ -176,6 +176,7 @@ var PLENControlServer = (function () {
 var ScratchExtensions;
 (function (ext) {
     var server = new PLENControlServer($);
+    console.log(server);
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () { };
     // Status reporting code
@@ -183,20 +184,22 @@ var ScratchExtensions;
     ext._getStatus = function () {
         return { status: 2, msg: 'Ready' };
     };
-    ext.forward = function (server) {
+    ext.forward = function () {
         console.log("forward");
+        console.log(server);
         server.play(46);
     };
-    ext.connect = function (server) {
+    ext.connect = function () {
         console.log("connect");
+        console.log(server);
         server.connect();
     };
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
             // block type, block name, function name
-            [' ', 'forward', 'forward', server],
-            [' ', 'connect', 'connet', server]
+            [' ', 'forward', 'forward'],
+            [' ', 'connect', 'connet']
         ]
     };
     // Register the extension

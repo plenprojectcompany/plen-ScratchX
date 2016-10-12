@@ -14,13 +14,13 @@ var ScratchExtensions: any
         return {status: 2, msg: 'Ready'};
     };
 
-    ext.forward = function(server: PLENControlServer) {
+    ext.forward = function() {
         console.log("forward");
         console.log(server);
         server.play(46);
     }; 
     
-    ext.connect = function(server: PLENControlServer) {
+    ext.connect = function() {
         console.log("connect");
         console.log(server);
         server.connect();
@@ -30,8 +30,8 @@ var ScratchExtensions: any
     var descriptor = {
         blocks: [
             // block type, block name, function name
-            [' ', 'forward', 'forward', server],
-            [' ', 'connect', 'connet', server]
+            [' ', 'forward', 'forward'],
+            [' ', 'connect', 'connet']
         ]
     };
 

@@ -1,7 +1,7 @@
 # Scratch X for PLEN
 A operating tool for PLEN using Scratch X.
 
-# How to use
+## How to use
 
 1. Connect to PLEN using USB.
 2. Access a below url.
@@ -10,5 +10,5 @@ A operating tool for PLEN using Scratch X.
   ```
   Here, if it shows `USB connection has been disconnected!`, please check the connection to PLEN.
 
-3. If it shows confirming dialog, please click 'I understand, continue'.
+3. If it shows confirming dialog, please click `I understand, continue`.
 4. There are blocks for operating PLEN in `Scripts > More Blocks > PLEN`.

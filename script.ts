@@ -9,18 +9,39 @@ var ScratchExtensions: any
 
     // Status reporting code
     // Use this to report missing hardware, plugin or unsupported browser
-    ext.connect = function() {
-        server.connect();
-    }
-    
     ext._getStatus = function() {
         return {status: 2, msg: 'Ready'};
     };
 
-    ext.forward = function(n: number) {
-        server.play(70);
-    }; 
+    ext.connect = function() {
+        server.connect();
+    }
     
+    ext.stop = function() {
+        server.stop();
+    }
+
+    ext.forward = function(n: number) {
+        for(var i = 0; i < n; i++) {                
+            server.play(1);
+        }
+    }; 
+
+    ext.right_turn = function(n: number) {                
+        for(var i = 0; i < n; i++) {
+            server.play(72);
+        }
+    }
+    
+    ext.left_turn = function(n: number) {
+        for(var i = 0; i < n; i++) {
+            server.play(71);
+        }
+    }
+    
+    ext.set_angle = function(n: number) {
+        // TODO: implement            
+    }
 
     // Block and block menu descriptions
     var descriptor = {
@@ -31,7 +52,7 @@ var ScratchExtensions: any
             [' ', '%n歩動かす', 'forward', 10],
             [' ', '時計回りに%n度回す', 'right_turn', 15],
             [' ', '反時計周りに%n度回す', 'left_turn', 15],
-            [' ', '%n度に向ける', 'direct']
+            [' ', '%n度に向ける', 'set_angle']
         ]
     };
 

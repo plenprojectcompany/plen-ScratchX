@@ -176,7 +176,6 @@ var PLENControlServer = (function () {
 var ScratchExtensions;
 (function (ext) {
     var server = new PLENControlServer($);
-    console.log(server);
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () { };
     // Status reporting code
@@ -184,23 +183,40 @@ var ScratchExtensions;
     ext._getStatus = function () {
         return { status: 2, msg: 'Ready' };
     };
-    ext.forward = function () {
-        console.log("forward");
-        console.log(server);
-        server.play(70);
-    };
     ext.connect = function () {
-        console.log("connect");
-        console.log(server);
         server.connect();
+    };
+    ext.stop = function () {
+        server.stop();
+    };
+    ext.forward = function (n) {
+        for (var i = 0; i < n; i++) {
+            server.play(1);
+        }
+    };
+    ext.right_turn = function (n) {
+        for (var i = 0; i < n; i++) {
+            server.play(72);
+        }
+    };
+    ext.left_turn = function (n) {
+        for (var i = 0; i < n; i++) {
+            server.play(71);
+        }
+    };
+    ext.set_angle = function (n) {
+        // TODO: implement            
     };
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
             // block type, block name, function name
-            [' ', 'forward', 'forward'],
-            [' ', 'connect', 'connet'],
-            [' ', '止まる', 'stop']
+            [' ', '接続する', 'connet'],
+            [' ', '止まる', 'stop'],
+            [' ', '%n歩動かす', 'forward', 10],
+            [' ', '時計回りに%n度回す', 'right_turn', 15],
+            [' ', '反時計周りに%n度回す', 'left_turn', 15],
+            [' ', '%n度に向ける', 'set_angle']
         ]
     };
     // Register the extension

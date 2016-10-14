@@ -31,7 +31,8 @@ var ScratchExtensions: any
         blocks: [
             // block type, block name, function name
             [' ', 'forward', 'forward'],
-            [' ', 'connect', 'connet']
+            [' ', 'connect', 'connet'],
+            [' ', '止まる', 'stop']
         ]
     };
 

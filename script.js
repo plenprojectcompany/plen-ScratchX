@@ -213,10 +213,10 @@ var ScratchExtensions;
             // block type, block name, function name
             [' ', '接続する', 'connet'],
             [' ', '止まる', 'stop'],
-            [' ', '%n歩動かす', 'forward', 10],
-            [' ', '時計回りに%n度回す', 'right_turn', 15],
-            [' ', '反時計周りに%n度回す', 'left_turn', 15],
-            [' ', '%n度に向ける', 'set_angle']
+            [' ', '%n 歩動かす', 'forward', 10],
+            [' ', '時計回りに %n 度回す', 'right_turn', 15],
+            [' ', '反時計周りに %n 度回す', 'left_turn', 15],
+            [' ', '%n 度に向ける', 'set_angle']
         ]
     };
     // Register the extension

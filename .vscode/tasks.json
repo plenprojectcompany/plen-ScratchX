@@ -4,7 +4,7 @@
     "version": "0.1.0",
     "command": "tsc",
     "isShellCommand": true,
-    "args": ["script.ts", "--outFile", "script.js"],
+    "args": ["./src/script.ts", "--outFile", "./dist/script.js"],
     "showOutput": "silent",
     "problemMatcher": "$tsc"
 }

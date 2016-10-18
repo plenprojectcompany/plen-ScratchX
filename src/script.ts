@@ -50,9 +50,8 @@ var ScratchExtensions: any
             [' ', '接続する', 'connet'],
             [' ', '止まる', 'stop'],
             [' ', '%n 歩動かす', 'forward', 10],
-            [' ', '時計回りに %n 度回す', 'right_turn', 15],
-            [' ', '反時計周りに %n 度回す', 'left_turn', 15],
-            [' ', '%n 度に向ける', 'set_angle']
+            [' ', '時計回りに %n 回回す', 'right_turn', 15],
+            [' ', '反時計周りに %n 回回す', 'left_turn', 15],
         ]
     };
 

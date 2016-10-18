@@ -56,8 +56,8 @@ var ScratchExtensions: any
             [' ', '%n 歩動かす', 'forward', 10],
             [' ', '時計回りに %n 回回す', 'right_turn', 15],
             [' ', '反時計周りに %n 回回す', 'left_turn', 15],
-            [' ', '右キック', 'right_kick']
-            [' ', '左キック', 'left_kick'],
+            [' ', '右キック', 'right_kick'],
+            [' ', '左キック', 'left_kick']
         ]
     };
 

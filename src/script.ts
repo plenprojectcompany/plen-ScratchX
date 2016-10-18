@@ -23,8 +23,7 @@ var ScratchExtensions: any
 
     ext.forward = function(n: number) {
         for(var i = 0; i < n; i++) {                
-            server.play(0);
-            server.play(2);
+            server.play(1);
         }
     }; 
 

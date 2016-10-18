@@ -23,7 +23,8 @@ var ScratchExtensions: any
 
     ext.forward = function(n: number) {
         for(var i = 0; i < n; i++) {                
-            server.play(1);
+            server.play(0);
+            server.play(2);
         }
     }; 
 
@@ -53,9 +54,9 @@ var ScratchExtensions: any
             // block type, block name, function name
             [' ', '接続する', 'connet'],
             [' ', '止まる', 'stop'],
-            [' ', '%n 歩動かす', 'forward', 10],
-            [' ', '時計回りに %n 回回す', 'right_turn', 15],
-            [' ', '反時計周りに %n 回回す', 'left_turn', 15],
+            [' ', '%n 歩動かす', 'forward', 1],
+            [' ', '時計回りに %n 回回す', 'right_turn', 1],
+            [' ', '反時計周りに %n 回回す', 'left_turn', 1],
             [' ', '右キック', 'right_kick'],
             [' ', '左キック', 'left_kick']
         ]

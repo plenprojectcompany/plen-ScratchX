@@ -204,8 +204,11 @@ var ScratchExtensions;
             server.play(71);
         }
     };
-    ext.set_angle = function (n) {
-        // TODO: implement            
+    ext.right_kick = function () {
+        server.play(25);
+    };
+    ext.left_kick = function () {
+        server.play(23);
     };
     // Block and block menu descriptions
     var descriptor = {
@@ -214,9 +217,9 @@ var ScratchExtensions;
             [' ', '接続する', 'connet'],
             [' ', '止まる', 'stop'],
             [' ', '%n 歩動かす', 'forward', 10],
-            [' ', '時計回りに %n 度回す', 'right_turn', 15],
-            [' ', '反時計周りに %n 度回す', 'left_turn', 15],
-            [' ', '%n 度に向ける', 'set_angle']
+            [' ', '時計回りに %n 回回す', 'right_turn', 15],
+            [' ', '反時計周りに %n 回回す', 'left_turn', 15],
+            [' ', '右キック', 'right_kick'][' ', '左キック', 'left_kick'],
         ]
     };
     // Register the extension

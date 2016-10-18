@@ -11,3 +11,12 @@ A operating tool for PLEN using Scratch X.
 
 4. If it shows confirming dialog, please click `I understand, continue`.
 5. There are blocks for operating PLEN in `Scripts > More Blocks > PLEN`.
+
+## Development
+
+1. clone or fork this repository.
+2. `$ npm install`
+3. update script.ts
+4. build 
+
+    In Visual Studio Code, `Ctrl+Shift+p > Tasks: run task > tsc`

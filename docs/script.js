@@ -112,14 +112,14 @@ var PLENControlServer = (function () {
             });
         }
     };
-    PLENControlServer.prototype.push = function (device, value) {
+    PLENControlServer.prototype.push = function (value) {
         if (this._state === SERVER_STATE.CONNECTED) {
-            this._socket.send('push/' + device + '/' + value.toString());
+            this._socket.send('push/' + value.toString());
         }
     };
-    PLENControlServer.prototype.pop = function (device) {
+    PLENControlServer.prototype.pop = function () {
         if (this._state == SERVER_STATE.CONNECTED) {
-            this._socket.send('pop/' + device);
+            this._socket.send('pop');
         }
     };
     PLENControlServer.prototype.applyNative = function (device, value) {

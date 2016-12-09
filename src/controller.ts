@@ -155,19 +155,19 @@ class PLENControlServer
         }
     }
 
-    push(device: string, value: number): void
+    push(value: number): void
     {
         if (this._state === SERVER_STATE.CONNECTED)
         {
-            this._socket.send('push/' + device + '/' + value.toString());
+            this._socket.send('push/' + value.toString());
         }
     }
 
-    pop(device: string): void
+    pop(): void
     {
         if(this._state == SERVER_STATE.CONNECTED) 
         {
-            this._socket.send('pop/' + device)
+            this._socket.send('pop')
         }
     }
 

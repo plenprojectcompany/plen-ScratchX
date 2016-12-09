@@ -160,6 +160,7 @@ class PLENControlServer
         if (this._state === SERVER_STATE.CONNECTED)
         {
             this._socket.send('push/' + value.toString());
+            this._state = SERVER_STATE.WAITING;
         }
     }
 
@@ -168,6 +169,7 @@ class PLENControlServer
         if(this._state == SERVER_STATE.CONNECTED) 
         {
             this._socket.send('pop')
+            this._state = SERVER_STATE.WAITING;
         }
     }
 

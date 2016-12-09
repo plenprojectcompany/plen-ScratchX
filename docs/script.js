@@ -112,6 +112,16 @@ var PLENControlServer = (function () {
             });
         }
     };
+    PLENControlServer.prototype.push = function (device, value) {
+        if (this._state === SERVER_STATE.CONNECTED) {
+            this._socket.send('push/' + device + '/' + value.toString());
+        }
+    };
+    PLENControlServer.prototype.pop = function (device) {
+        if (this._state == SERVER_STATE.CONNECTED) {
+            this._socket.send('pop/' + device);
+        }
+    };
     PLENControlServer.prototype.applyNative = function (device, value) {
         if (this._state === SERVER_STATE.CONNECTED) {
             this._socket.send('apply/' + device + '/' + value.toString());
@@ -191,9 +201,14 @@ var ScratchExtensions;
     };
     ext.forward = function (n) {
         for (var i = 0; i < n; i++) {
-            server.play(0);
-            server.play(2);
+            server.play(1);
         }
+    };
+    ext.enqueue = function (n) {
+        server.push(1);
+    };
+    ext.dequeue = function () {
+        server.pop();
     };
     ext.right_turn = function (n) {
         for (var i = 0; i < n; i++) {
@@ -221,7 +236,9 @@ var ScratchExtensions;
             [' ', '時計回りに %n 回回す', 'right_turn', 1],
             [' ', '反時計周りに %n 回回す', 'left_turn', 1],
             [' ', '右キック', 'right_kick'],
-            [' ', '左キック', 'left_kick']
+            [' ', '左キック', 'left_kick'],
+            [' ', 'キューに命令を追加する', 'enqueue'],
+            [' ', 'キューに溜まっている命令を実行する', 'dequeue']
         ]
     };
     // Register the extension

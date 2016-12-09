@@ -174,6 +174,7 @@ var PLENControlServer = (function () {
                 }
             }
             else {
+                console.log("[WebSocket] successfully sending message");
                 _this._state = SERVER_STATE.CONNECTED;
             }
         };

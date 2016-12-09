@@ -249,6 +249,7 @@ class PLENControlServer
             }
             else
             {
+                console.log("[WebSocket] successfully sending message");
                 this._state = SERVER_STATE.CONNECTED;
             }
         };

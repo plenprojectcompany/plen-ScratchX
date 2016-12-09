@@ -25,7 +25,15 @@ var ScratchExtensions: any
         for(var i = 0; i < n; i++) {                
             server.play(1);
         }
-    }; 
+    };
+
+    ext.enqueue = function(n: number) {
+        server.push(1)
+    } 
+
+    ext.dequeue = function() {
+        server.pop()
+    }
 
     ext.right_turn = function(n: number) {                
         for(var i = 0; i < n; i++) {
@@ -57,7 +65,9 @@ var ScratchExtensions: any
             [' ', '時計回りに %n 回回す', 'right_turn', 1],
             [' ', '反時計周りに %n 回回す', 'left_turn', 1],
             [' ', '右キック', 'right_kick'],
-            [' ', '左キック', 'left_kick']
+            [' ', '左キック', 'left_kick'],
+            [' ', 'キューに命令を追加する', 'enqueue'],
+            [' ', 'キューに溜まっている命令を実行する', 'dequeue']
         ]
     };
 

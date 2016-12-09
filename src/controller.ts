@@ -155,6 +155,22 @@ class PLENControlServer
         }
     }
 
+    push(device: string, value: number): void
+    {
+        if (this._state === SERVER_STATE.CONNECTED)
+        {
+            this._socket.send('push/' + device + '/' + value.toString());
+        }
+    }
+
+    pop(device: string): void
+    {
+        if(this._state == SERVER_STATE.CONNECTED) 
+        {
+            this._socket.send('pop/' + device)
+        }
+    }
+
     applyNative(device: string, value: number): void
     {
         if (this._state === SERVER_STATE.CONNECTED)

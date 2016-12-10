@@ -10,7 +10,20 @@ var ScratchExtensions: any
     // Status reporting code
     // Use this to report missing hardware, plugin or unsupported browser
     ext._getStatus = function() {
-        return {status: 2, msg: 'Ready'};
+        var server_status: SERVER_STATE = server.getStatus();
+        var status: number;
+        var msg: string;
+        if(server_status == SERVER_STATE.CONNECTED) {
+            status = 2;
+            msg = 'Connected';
+        } else if(server_status == SERVER_STATE.DISCONNECTED) {
+            status = 0;
+            msg = 'Disconnected';
+        } else {
+            status = 1;
+            msg = 'Waiting';
+        }
+        return {status: status, msg: msg};
     };
 
     ext.connect = function() {

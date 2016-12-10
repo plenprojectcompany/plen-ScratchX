@@ -113,16 +113,10 @@ var PLENControlServer = (function () {
         }
     };
     PLENControlServer.prototype.push = function (value) {
-        if (this._state === SERVER_STATE.CONNECTED) {
-            this._socket.send('push/' + value.toString());
-            this._state = SERVER_STATE.WAITING;
-        }
+        this._socket.send('push/' + value.toString());
     };
     PLENControlServer.prototype.pop = function () {
-        if (this._state == SERVER_STATE.CONNECTED) {
-            this._socket.send('pop');
-            this._state = SERVER_STATE.WAITING;
-        }
+        this._socket.send('pop');
     };
     PLENControlServer.prototype.applyNative = function (device, value) {
         if (this._state === SERVER_STATE.CONNECTED) {
@@ -202,46 +196,40 @@ var ScratchExtensions;
     ext.stop = function () {
         server.stop();
     };
-    ext.forward = function (n) {
-        for (var i = 0; i < n; i++) {
-            server.play(1);
-        }
+    ext.push = function (n) {
+        server.push(n);
     };
-    ext.enqueue = function (n) {
-        server.push(1);
-    };
-    ext.dequeue = function () {
+    ext.execute_and_pop = function () {
         server.pop();
     };
-    ext.right_turn = function (n) {
-        for (var i = 0; i < n; i++) {
-            server.play(72);
-        }
+    ext.forward = function () {
+        return 1;
     };
-    ext.left_turn = function (n) {
-        for (var i = 0; i < n; i++) {
-            server.play(71);
-        }
+    ext.right_turn = function () {
+        return 72;
+    };
+    ext.left_turn = function () {
+        return 71;
     };
     ext.right_kick = function () {
-        server.play(25);
+        return 25;
     };
     ext.left_kick = function () {
-        server.play(23);
+        return 23;
     };
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
             // block type, block name, function name
-            [' ', '接続する', 'connet'],
+            [' ', 'push %n', 'push', 1],
+            [' ', 'execute & pop', 'execute_and_pop'],
+            [' ', '接続する', 'connect'],
             [' ', '止まる', 'stop'],
-            [' ', '%n 歩動かす', 'forward', 1],
-            [' ', '時計回りに %n 回回す', 'right_turn', 1],
-            [' ', '反時計周りに %n 回回す', 'left_turn', 1],
-            [' ', '右キック', 'right_kick'],
-            [' ', '左キック', 'left_kick'],
-            [' ', 'キューに命令を追加する', 'enqueue'],
-            [' ', 'キューに溜まっている命令を実行する', 'dequeue']
+            ['r', '1歩歩く', 'forward'],
+            ['r', '時計回りで回転', 'right_turn'],
+            ['r', '反時計周りで回転', 'left_turn'],
+            ['r', '右キック', 'right_kick'],
+            ['r', '左キック', 'left_kick'],
         ]
     };
     // Register the extension

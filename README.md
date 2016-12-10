@@ -19,4 +19,14 @@ A operating tool for PLEN using Scratch X.
 3. update script.ts
 4. build 
 
-    In Visual Studio Code, `Ctrl+Shift+p > Tasks: run task > tsc`
+  In Visual Studio Code, `Ctrl+Shift+p > Tasks: run task > tsc` or `Ctrl+Shift+b`
+    
+5. debug
+
+  cd git-root in this directory
+
+  ```
+  $ python -m SimpleHTTPServer {port}
+  ```
+  
+  you open the url `http://scratchx.org/?url=http://localhost:{port}/docs/script.js#scratch`

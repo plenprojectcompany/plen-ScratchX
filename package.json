@@ -1,0 +1,28 @@
+{
+  "name": "plen-scratchx",
+  "version": "1.0.0",
+  "description": "Scratch X plugin to operate PLEN series robots.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plenprojectcompany/plen-ScratchX.git"
+  },
+  "author": "PLEN Project Company Inc",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/plenprojectcompany/plen-ScratchX/issues",
+    "email": "helpline@plen.jp"
+  },
+  "homepage": "https://github.com/plenprojectcompany/plen-ScratchX#readme",
+  "dependencies": {},
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {
+    "typescript": "^1.8.10",
+    "typings": "^1.3.2"
+  }
+}

@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
         "removeComments": true,
-	"target": "es3",
-	"sourceMap": false,
+        "target": "es3",
+        "sourceMap": false,
         "outFile": "docs/plugin.js"
     }
 }

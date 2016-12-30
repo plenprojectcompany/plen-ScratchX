@@ -1,83 +1,79 @@
-/// <reference path="controller.ts"/>
+/// <reference path="plen-control-server.api.ts"/>
 
-var ScratchExtensions: any
 
-(function(ext: any) {
-    var server = new PLENControlServer($);
-    // Cleanup function when the extension is unloaded
-    ext._shutdown = function() {};
+declare var ScratchExtensions: any;
 
-    // Status reporting code
-    // Use this to report missing hardware, plugin or unsupported browser
-    ext._getStatus = function() {
-        var server_status: SERVER_STATE = server.getStatus();
+((plen_extension: any) =>
+{
+    var server: PLENControlServerAPI = new PLENControlServerAPI($);
+
+    // Cleanup function when the extension is unloaded.
+    plen_extension._shutdown = () =>
+    {
+        server.disconnect();
+    };
+
+    // Status reporting code:
+    // Use this to report missing hardware, plugin or unsupported browser.
+    plen_extension._getStatus = () =>
+    {
+        var server_state: SERVER_STATE = server.getStatus();
         var status: number;
         var msg: string;
-        if(server_status == SERVER_STATE.CONNECTED) {
-            status = 2;
-            msg = 'Connected';
-        } else if(server_status == SERVER_STATE.DISCONNECTED) {
-            status = 0;
-            msg = 'Disconnected';
-        } else {
-            status = 1;
-            msg = 'Waiting';
+
+        switch (server_state)
+        {
+            case (SERVER_STATE.CONNECTED):
+            {
+                status = 2; msg = 'Connected';
+                break;
+            }
+
+            case (SERVER_STATE.DISCONNECTED):
+            {
+                status = 0; msg = 'Disconnected';
+                break;
+            }
+
+            default:
+            {
+                status = 1; msg = 'Waiting...';
+            }
         }
-        return {status: status, msg: msg};
+
+        return { status: status, msg: msg };
     };
 
-    ext.connect = function() {
-        server.connect();
-    }
-    
-    ext.stop = function() {
-        server.stop();
-    }
+    // Definition of command blocks.
+    plen_extension.connect = ()          => { server.connect(); };
+    plen_extension.push    = (n: number) => { server.push(n);   };
+    plen_extension.pop     = ()          => { server.pop();     };
+    plen_extension.stop    = ()          => { server.stop();    };
 
-    ext.push = function(n: number) {
-        server.push(n)
-    } 
+    // Definition of reporter blocks.
+    plen_extension.slot_forward    = () => { return 1;  };
+    plen_extension.slot_left_turn  = () => { return 71; };
+    plen_extension.slot_right_turn = () => { return 72; };
+    plen_extension.slot_left_kick  = () => { return 23; };
+    plen_extension.slot_right_kick = () => { return 25; };
 
-    ext.execute_and_pop = function() {
-        server.pop()
-    }
-
-    ext.forward = function() {
-        return 1;
-    };
-
-    ext.right_turn = function() {                
-        return 72;
-    }
-    
-    ext.left_turn = function() {
-        return 71;
-    }
-
-    ext.right_kick = function() {
-        return 25;
-    }    
-    
-    ext.left_kick = function() {
-        return 23;
-    }
-
-    // Block and block menu descriptions
-    var descriptor = {
+    // Block and block menu descriptions.
+    var descriptor: any = {
         blocks: [
-            // block type, block name, function name
-            [' ', 'push %n', 'push', 1],
-            [' ', 'execute & pop', 'execute_and_pop'],
-            [' ', '接続する', 'connect'],
-            [' ', '止まる', 'stop'],
-            ['r', '1歩歩く', 'forward'],
-            ['r', '時計回りで回転', 'right_turn'],
-            ['r', '反時計周りで回転', 'left_turn'],
-            ['r', '右キック', 'right_kick'],
-            ['r', '左キック', 'left_kick'],
+            // [<BLOCK_TYPE>, <BLOCK_NAME>, <FUNCTION_NAME>, <DEFAULT_ARGUMENT>...]
+            // s.a. https://github.com/LLK/scratchx/wiki#adding-blocks
+            [' ', 'Connect',                 'connect'         ],
+            [' ', 'Reserve to play slot %n', 'push',          0],
+            [' ', 'Play all',                'pop'             ],
+            [' ', 'Stop to play any motion', 'stop'            ],
+            ['r', 'Slot: Step to forward',   'slot_forward'    ],
+            ['r', 'Slot: Turn to left',      'slot_left_turn'  ],
+            ['r', 'Slot: Turn to right',     'slot_right_turn' ],
+            ['r', 'Slot: Left kick',         'slot_left_kick'  ],
+            ['r', 'Slot: Right kick',        'slot_right_kick' ]
         ]
     };
 
-    // Register the extension
-    ScratchExtensions.register('PLEN', descriptor, ext);
+    // Register the extension.
+    ScratchExtensions.register('PLEN', descriptor, plen_extension);
 })({});

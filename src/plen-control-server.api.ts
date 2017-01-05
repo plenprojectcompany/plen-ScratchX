@@ -1,6 +1,5 @@
-/// <reference path="../typings/globals/jquery/index.d.ts"/>
+/// <reference path='../typings/index.d.ts'/>
 
-'use strict';
 
 enum SERVER_STATE
 {
@@ -9,14 +8,14 @@ enum SERVER_STATE
     WAITING
 };
 
-class PLENControlServer
+class PLENControlServerAPI
 {
     private _state: SERVER_STATE = SERVER_STATE.DISCONNECTED;
     private _socket: WebSocket = null;
-    private _ip_addr: string = "localhost:17264";
+    private _ip_addr: string = 'localhost:17264';
 
     constructor(
-        public $http: any
+        private _$jquery: JQueryStatic
     )
     {
         this.connect();
@@ -28,15 +27,15 @@ class PLENControlServer
         {
             this._state = SERVER_STATE.WAITING;
 
-            this.$http.get("//" + this._ip_addr + "/v2/connect")
-                .success((response: any) =>
+            this._$jquery.get('//' + this._ip_addr + '/v2/connect')
+                .done((response: any) =>
                 {
                     if (response.data.result === true)
                     {
                         this._state = SERVER_STATE.CONNECTED;
                         this._createWebSocket();
 
-                        if (!(success_callback == null))
+                        if (success_callback !== null)
                         {
                             success_callback();
                         }
@@ -45,10 +44,10 @@ class PLENControlServer
                     {
                         this._state = SERVER_STATE.DISCONNECTED;
 
-                        alert("USB connection has been disconnected!");
+                        alert('USB connection has been disconnected!');
                     }
                 })
-                .error(() =>
+                .fail(() =>
                 {
                     this._state = SERVER_STATE.DISCONNECTED;
 
@@ -57,54 +56,46 @@ class PLENControlServer
         }
     }
 
-    install(json, success_callback = null): void
+    disconnect(success_callback = null): void
     {
         if (this._state === SERVER_STATE.CONNECTED)
         {
             this._state = SERVER_STATE.WAITING;
 
-            this.$http.put("//" + this._ip_addr + "/v2/motions/" + json.slot.toString(), json)
-                .success((response: any) =>
+            this._$jquery.get('//' + this._ip_addr + '/v2/disconnect')
+                .done((response: any) =>
                 {
-                    this._state = SERVER_STATE.CONNECTED;
-
                     if (response.data.result === true)
                     {
-                        if (!(success_callback == null))
+                        if (success_callback !== null)
                         {
                             success_callback();
                         }
                     }
-                })
-                .error(() =>
-                {
+
                     this._state = SERVER_STATE.DISCONNECTED;
                 })
-                .finally(() =>
+                .fail(() =>
                 {
-                    console.log("Install Finished")
+                    this._state = SERVER_STATE.CONNECTED;
                 });
         }
     }
-    
+
     play(slot: number, success_callback = null): void
     {
-        console.log("begin to play");
         if (this._state === SERVER_STATE.CONNECTED)
         {
             this._state = SERVER_STATE.WAITING;
-            console.log("successfully connected to play");
 
-            this.$http.get("//" + this._ip_addr + "/v2/motions/" + slot.toString() + "/play")
-                .success((response: any) =>
+            this._$jquery.get('//' + this._ip_addr + '/v2/motions/' + slot.toString() + '/play')
+                .done((response: any) =>
                 {
-                    console.log("ok");
                     this._state = SERVER_STATE.CONNECTED;
 
                     if (response.data.result === true)
                     {
-                        console.log("successfully played");
-                        if (!(success_callback == null))
+                        if (success_callback !== null)
                         {
                             success_callback();
                         }
@@ -113,10 +104,10 @@ class PLENControlServer
                     {
                         this._state = SERVER_STATE.DISCONNECTED;
 
-                        alert("USB connection was disconnected!");
+                        alert('USB connection was disconnected!');
                     }
                 })
-                .error(() =>
+                .fail(() =>
                 {
                     this._state = SERVER_STATE.DISCONNECTED;
                 });
@@ -129,8 +120,8 @@ class PLENControlServer
         {
             this._state = SERVER_STATE.WAITING;
 
-            this.$http.get("//" + this._ip_addr + "/v2/motions/stop")
-                .success((response: any) =>
+            this._$jquery.get('//' + this._ip_addr + '/v2/motions/stop')
+                .done((response: any) =>
                 {
                     this._state = SERVER_STATE.CONNECTED;
 
@@ -145,19 +136,19 @@ class PLENControlServer
                     {
                         this._state = SERVER_STATE.DISCONNECTED;
 
-                        alert("USB connection was disconnected!");
+                        alert('USB connection was disconnected!');
                     }
                 })
-                .error(() =>
+                .fail(() =>
                 {
                     this._state = SERVER_STATE.DISCONNECTED;
                 });
         }
     }
 
-    push(value: number): void
+    push(slot: number, loop_count: number = 0): void
     {
-         this._socket.send('push/' + value.toString());
+         this._socket.send('push/' + slot.toString() + '/' + loop_count.toString());
     }
 
     pop(): void
@@ -174,31 +165,11 @@ class PLENControlServer
         }
     }
 
-    setMin(device: string, value: number): void
+    applyDiff(device: string, value: number): void
     {
         if (this._state === SERVER_STATE.CONNECTED)
         {
-            this._socket.send('setMin/' + device + '/' + value.toString());
-            this._state = SERVER_STATE.WAITING;
-        }
-    }
-
-    setMax(device: string, value: number): void
-    {
-        if (this._state === SERVER_STATE.CONNECTED)
-        {
-            this._socket.send('setMax/' + device + '/' + value.toString());
-            this._state = SERVER_STATE.WAITING;
-        }
-    }
-
-    setHome(device: string, value: number): void
-    {
-        if (this._state === SERVER_STATE.CONNECTED)
-        {
-            console.log("setHome");
-
-            this._socket.send('setHome/' + device + '/' + value.toString());
+            this._socket.send('applyDiff/' + device + '/' + value.toString());
             this._state = SERVER_STATE.WAITING;
         }
     }
@@ -208,15 +179,65 @@ class PLENControlServer
         return this._state;
     }
 
+    checkVersionOfPLEN(): void
+    {
+        if (this._state === SERVER_STATE.CONNECTED)
+        {
+            var deferred: JQueryDeferred<any> = this._$jquery.Deferred();
+            var promise: JQueryPromise<any>   = deferred.promise();
+
+            var urls: Array<string> = [
+                '//' + this._ip_addr + '/v2/version',
+                '//' + this._ip_addr + '/v2/metadata'
+            ];
+
+            var responses: Array<any> = [];
+
+            urls.forEach((url: string) =>
+            {
+                promise = promise.always(() =>
+                {
+                    return this._$jquery.get(url)
+                        .done((response: any) =>
+                        {
+                            responses.push(response);
+                        });
+                });
+            });
+
+            promise = promise
+                .then(() =>
+                {
+                    try {
+                        var firmware_version: number = parseInt(responses[0].data['version'].replace(/\./g, ''));
+                        var required_verison: number = parseInt(responses[1].data['required-firmware'].replace(/[\.\~]/g, ''));
+
+                        if (firmware_version < required_verison) throw 'version error';
+                    }
+                    catch (e)
+                    {
+                        this._state = SERVER_STATE.DISCONNECTED;
+
+                        alert('Firmware version of your PLEN is old. Please update version ' + responses[1].data['required-firmware'] + '.');
+                    }
+                })
+                .fail(() =>
+                {
+                    this._state = SERVER_STATE.DISCONNECTED;
+                });
+
+            deferred.resolve();
+        }
+    }
+
     private _createWebSocket(): void
     {
-        if (!(this._socket == null))
+        if (this._socket !== null)
         {
             this._socket.close();
             this._socket = null;
         }
-            
-        console.log("begin to connect websocket");
+
         this._socket = new WebSocket('ws://' + this._ip_addr + '/v2/cmdstream');
 
         this._socket.onopen = () =>
@@ -224,24 +245,22 @@ class PLENControlServer
             if (this._socket.readyState === WebSocket.OPEN)
             {
                 this._state = SERVER_STATE.CONNECTED;
-                console.log("successfully connected")
             }
         };
 
-        this._socket.onmessage = (event) =>
+        this._socket.onmessage = (e: MessageEvent) =>
         {
-            if (event.data == "False")
+            if (e.data == 'False')
             {
                 if (this._state === SERVER_STATE.WAITING)
                 {
                     this._state = SERVER_STATE.DISCONNECTED;
 
-                    alert("USB connection has been disconnected!");
+                    alert('USB connection has been disconnected!');
                 }
             }
             else
             {
-                console.log("[WebSocket] successfully sending message");
                 this._state = SERVER_STATE.CONNECTED;
             }
         };

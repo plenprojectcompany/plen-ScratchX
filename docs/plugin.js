@@ -226,22 +226,22 @@ var PLENControlServerAPI = (function () {
     plen_extension.push = function (n) { server.push(n); };
     plen_extension.pop = function () { server.pop(); };
     plen_extension.stop = function () { server.stop(); };
-    plen_extension.forward = function () { return 1; };
-    plen_extension.left_turn = function () { return 71; };
-    plen_extension.right_turn = function () { return 72; };
-    plen_extension.left_kick = function () { return 23; };
-    plen_extension.right_kick = function () { return 25; };
+    plen_extension.slot_forward = function () { return 1; };
+    plen_extension.slot_left_turn = function () { return 71; };
+    plen_extension.slot_right_turn = function () { return 72; };
+    plen_extension.slot_left_kick = function () { return 23; };
+    plen_extension.slot_right_kick = function () { return 25; };
     var descriptor = {
         blocks: [
             [' ', 'Connect', 'connect'],
-            [' ', 'Push %n', 'push', 1],
-            [' ', 'Execute all', 'pop'],
-            [' ', 'Stop', 'stop'],
-            ['r', 'Step to forward', 'forward'],
-            ['r', 'Turn to left', 'left_turn'],
-            ['r', 'Turn to right', 'right_turn'],
-            ['r', 'Left kick', 'left_kick'],
-            ['r', 'Right kick', 'right_kick']
+            [' ', 'Reserve to play slot %n', 'push', 0],
+            [' ', 'Play all', 'pop'],
+            [' ', 'Stop to play any motion', 'stop'],
+            ['r', 'Slot: Step to forward', 'slot_forward'],
+            ['r', 'Slot: Turn to left', 'slot_left_turn'],
+            ['r', 'Slot: Turn to right', 'slot_right_turn'],
+            ['r', 'Slot: Left kick', 'slot_left_kick'],
+            ['r', 'Slot: Right kick', 'slot_right_kick']
         ]
     };
     ScratchExtensions.register('PLEN', descriptor, plen_extension);

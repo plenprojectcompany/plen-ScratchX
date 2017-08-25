@@ -19,6 +19,8 @@ class PLENControlServerAPI
     )
     {
         this.connect();
+
+        this._$jquery(window).on('beforeunload', () => { this.disconnect(); });
     }
 
     connect(success_callback = null): void

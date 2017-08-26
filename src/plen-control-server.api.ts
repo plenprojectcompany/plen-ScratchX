@@ -155,7 +155,7 @@ class PLENControlServerAPI
 
     pop(): void
     {
-         this._socket.send('pop')
+         this._socket.send('pop');
     }
 
     applyNative(device: string, value: number): void

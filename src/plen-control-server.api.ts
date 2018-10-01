@@ -1,6 +1,3 @@
-/// <reference path='../typings/index.d.ts'/>
-
-
 enum SERVER_STATE
 {
     DISCONNECTED,
@@ -11,169 +8,201 @@ enum SERVER_STATE
 class PLENControlServerAPI
 {
     private _state: SERVER_STATE = SERVER_STATE.DISCONNECTED;
-    private _socket: WebSocket = null;
+    private _socket: WebSocket | null = null;
     private _ip_addr: string = 'localhost:17264';
 
     constructor(
-        private _$jquery: JQueryStatic
+        private _$: JQueryStatic
     )
     {
-        this.connect();
+        this.connect()
+            .then(() => { return this.checkVersionOfPLEN(); })
+            .catch((e) => { alert(e); });
 
-        this._$jquery(window).on('beforeunload', () => { this.disconnect(); });
+        this._$(window).on('beforeunload', () =>
+        {
+            this.disconnect().catch((e) => { console.log(e); });
+        });
     }
 
-    connect(success_callback = null): void
+    connect(): JQuery.Promise<any, any, any>
     {
+        const d = this._$.Deferred();
+
         if (this._state === SERVER_STATE.DISCONNECTED)
         {
             this._state = SERVER_STATE.WAITING;
 
-            this._$jquery.get('//' + this._ip_addr + '/v2/connect')
-                .done((response: any) =>
+            this._$.get('//' + this._ip_addr + '/v2/connect')
+                .then((response: any) =>
                 {
                     if (response.data.result === true)
                     {
                         this._state = SERVER_STATE.CONNECTED;
-                        this._createWebSocket();
 
-                        if (success_callback !== null)
-                        {
-                            success_callback();
-                        }
+                        return this._createWebSocket()
+                            .then(() => { d.resolve(); })
+                            .catch(() => { d.reject(); });
                     }
                     else
                     {
                         this._state = SERVER_STATE.DISCONNECTED;
 
-                        alert('USB connection has been disconnected!');
+                        d.reject('USB connection has been disconnected!');
                     }
                 })
-                .fail(() =>
+                .catch(() =>
                 {
                     this._state = SERVER_STATE.DISCONNECTED;
 
-                    alert("The control-server hasn't run.");
+                    d.reject("The control-server hasn't run. (or the api version is not supported.)");
                 });
         }
+        else
+        {
+            d.reject('Already connected to the control-server.');
+        }
+
+        return d.promise();
     }
 
-    disconnect(success_callback = null): void
+    disconnect(): JQuery.Promise<any, any, any>
     {
+        const d = this._$.Deferred();
+
         if (this._state === SERVER_STATE.CONNECTED)
         {
             this._state = SERVER_STATE.WAITING;
 
-            this._$jquery.get('//' + this._ip_addr + '/v2/disconnect')
-                .done((response: any) =>
+            this._$.get('//' + this._ip_addr + '/v2/disconnect')
+                .then((response: any) =>
                 {
                     if (response.data.result === true)
                     {
-                        if (success_callback !== null)
-                        {
-                            success_callback();
-                        }
-                    }
+                        this._state = SERVER_STATE.DISCONNECTED;
 
-                    this._state = SERVER_STATE.DISCONNECTED;
+                        d.resolve();
+                    }
+                    else
+                    {
+                        d.reject("The control-server hasn't run. (or the api version is not supported.)");
+                    }
                 })
-                .fail(() =>
+                .catch(() =>
                 {
                     this._state = SERVER_STATE.CONNECTED;
+
+                    d.reject("The control-server hasn't run. (or the api version is not supported.)");
                 });
         }
+        else
+        {
+            d.reject('Already disconnected from the control-server.');
+        }
+
+        return d.promise();
     }
 
-    play(slot: number, success_callback = null): void
+    play(slot: number): JQuery.Promise<any, any, any>
     {
+        const d = this._$.Deferred();
+
         if (this._state === SERVER_STATE.CONNECTED)
         {
             this._state = SERVER_STATE.WAITING;
 
-            this._$jquery.get('//' + this._ip_addr + '/v2/motions/' + slot.toString() + '/play')
-                .done((response: any) =>
+            this._$.get('//' + this._ip_addr + '/v2/motions/' + slot.toString() + '/play')
+                .then((response: any) =>
                 {
                     this._state = SERVER_STATE.CONNECTED;
 
                     if (response.data.result === true)
                     {
-                        if (success_callback !== null)
-                        {
-                            success_callback();
-                        }
+                        d.resolve();
                     }
                     else
                     {
                         this._state = SERVER_STATE.DISCONNECTED;
 
-                        alert('USB connection was disconnected!');
+                        d.reject('USB connection has been disconnected!');
                     }
                 })
-                .fail(() =>
+                .catch(() =>
                 {
                     this._state = SERVER_STATE.DISCONNECTED;
+
+                    d.reject("The control-server hasn't run. (or the api version is not supported.)");
                 });
         }
+        else
+        {
+            d.reject('The control-server is busy or the connection was disabled.');
+        }
+
+        return d.promise();
     }
 
-    stop(success_callback = null): void
+    stop(): JQuery.Promise<any, any, any>
     {
+        const d = this._$.Deferred();
+
         if (this._state === SERVER_STATE.CONNECTED)
         {
             this._state = SERVER_STATE.WAITING;
 
-            this._$jquery.get('//' + this._ip_addr + '/v2/motions/stop')
-                .done((response: any) =>
+            this._$.get('//' + this._ip_addr + '/v2/motions/stop')
+                .then((response: any) =>
                 {
                     this._state = SERVER_STATE.CONNECTED;
 
                     if (response.data.result === true)
                     {
-                        if (!(success_callback == null))
-                        {
-                            success_callback();
-                        }
+                        d.resolve();
                     }
                     else
                     {
                         this._state = SERVER_STATE.DISCONNECTED;
 
-                        alert('USB connection was disconnected!');
+                        d.reject('USB connection has been disconnected!');
                     }
                 })
-                .fail(() =>
+                .catch(() =>
                 {
                     this._state = SERVER_STATE.DISCONNECTED;
+
+                    d.reject("The control-server hasn't run. (or the api version is not supported.)");
                 });
         }
-    }
-
-    push(slot: number, loop_count: number = 0): void
-    {
-         this._socket.send('push/' + slot.toString() + '/' + loop_count.toString());
-    }
-
-    pop(): void
-    {
-         this._socket.send('pop');
-    }
-
-    applyNative(device: string, value: number): void
-    {
-        if (this._state === SERVER_STATE.CONNECTED)
+        else
         {
-            this._socket.send('apply/' + device + '/' + value.toString());
-            this._state = SERVER_STATE.WAITING;
+            d.reject('The control-server is busy or the connection was disabled.');
         }
+
+        return d.promise();
     }
 
-    applyDiff(device: string, value: number): void
+    push(slot: number, loop_count: number = 0): boolean
     {
-        if (this._state === SERVER_STATE.CONNECTED)
+        if (this._socket)
         {
-            this._socket.send('applyDiff/' + device + '/' + value.toString());
-            this._state = SERVER_STATE.WAITING;
+            this._socket.send('push/' + slot.toString() + '/' + loop_count.toString());
+
+            return true;
         }
+
+        return false;
+    }
+
+    pop(): boolean
+    {
+        if (this._socket)
+        {
+            this._socket.send('pop');
+
+            return true;
+        }
+
+        return false
     }
 
     getStatus(): SERVER_STATE
@@ -181,60 +210,72 @@ class PLENControlServerAPI
         return this._state;
     }
 
-    checkVersionOfPLEN(): void
+    checkVersionOfPLEN(): JQuery.Promise<any, any, any>
     {
+        const d = this._$.Deferred();
+
         if (this._state === SERVER_STATE.CONNECTED)
         {
-            var deferred: JQueryDeferred<any> = this._$jquery.Deferred();
-            var promise: JQueryPromise<any>   = deferred.promise();
-
-            var urls: Array<string> = [
+            const urls: Array<string> = [
                 '//' + this._ip_addr + '/v2/version',
                 '//' + this._ip_addr + '/v2/metadata'
             ];
 
-            var responses: Array<any> = [];
+            const promises = this._$.map(urls, (url: string) => { return this._$.get(url); });
 
-            urls.forEach((url: string) =>
-            {
-                promise = promise.always(() =>
+            this._$.when(promises)
+                .then((_0, _1) =>
                 {
-                    return this._$jquery.get(url)
-                        .done((response: any) =>
-                        {
-                            responses.push(response);
-                        });
-                });
-            });
+                    console.log(_0, _1);
 
-            promise = promise
-                .then(() =>
-                {
                     try {
-                        var firmware_version: number = parseInt(responses[0].data['version'].replace(/\./g, ''));
-                        var required_verison: number = parseInt(responses[1].data['required-firmware'].replace(/[\.\~]/g, ''));
+                        const firmware_version: number = parseInt(_0[0].responseJSON.data.version.replace(/\./g, ''));
+                        const required_verison: number = parseInt(_1[0].responseJSON.required_firmware.replace(/[\.\~]/g, ''));
 
-                        if (firmware_version < required_verison) throw 'version error';
+                        if (firmware_version < required_verison)
+                        {
+                            throw ('Firmware version of your PLEN is old. Please update version ' + _1[0].responseJSON.required_firmware + '.');
+                        }
+
+                        if (required_verison < 141)
+                        {
+                            throw ('Application version of "Control Server" is old. Please update version 2.5.0 or above.');
+                        }
+
+                        d.resolve();
                     }
                     catch (e)
                     {
-                        this._state = SERVER_STATE.DISCONNECTED;
-
-                        alert('Firmware version of your PLEN is old. Please update version ' + responses[1].data['required-firmware'] + '.');
+                        return this._$.Deferred().reject(e);
                     }
                 })
-                .fail(() =>
+                .catch((error: any) =>
                 {
-                    this._state = SERVER_STATE.DISCONNECTED;
-                });
+                    if (typeof(error) === 'string')
+                    {
+                        d.reject(error);
+                    }
+                    else
+                    {
+                        d.reject('Application version of "Control Server" is old. Please update version 2.5.0 or above.');
+                    }
 
-            deferred.resolve();
+                    this.disconnect();
+                });
         }
+        else
+        {
+            d.reject('The control-server is busy or the connection was disabled.');
+        }
+
+        return d.promise();
     }
 
-    private _createWebSocket(): void
+    private _createWebSocket(): JQuery.Promise<any, any, any>
     {
-        if (this._socket !== null)
+        const d = this._$.Deferred();
+
+        if (this._socket)
         {
             this._socket.close();
             this._socket = null;
@@ -244,7 +285,7 @@ class PLENControlServerAPI
 
         this._socket.onopen = () =>
         {
-            if (this._socket.readyState === WebSocket.OPEN)
+            if (this._socket && this._socket.readyState === WebSocket.OPEN)
             {
                 this._state = SERVER_STATE.CONNECTED;
             }
@@ -252,18 +293,17 @@ class PLENControlServerAPI
 
         this._socket.onmessage = (e: MessageEvent) =>
         {
-            if (e.data == 'False')
+            if (e.data === 'False')
             {
-                if (this._state === SERVER_STATE.WAITING)
-                {
-                    this._state = SERVER_STATE.DISCONNECTED;
+                this._state = SERVER_STATE.DISCONNECTED;
 
-                    alert('USB connection has been disconnected!');
-                }
+                d.reject('USB connection has been disconnected!');
             }
             else
             {
                 this._state = SERVER_STATE.CONNECTED;
+
+                d.notify(e.data);
             }
         };
 
@@ -271,7 +311,9 @@ class PLENControlServerAPI
         {
             this._state = SERVER_STATE.DISCONNECTED;
 
-            alert("The control-server hasn't run.");
+            d.reject("The control-server hasn't run. (or the api version is not supported.)");
         };
+
+        return d.promise();
     }
 }

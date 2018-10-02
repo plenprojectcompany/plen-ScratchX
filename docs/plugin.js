@@ -7,11 +7,13 @@ var SERVER_STATE;
 ;
 var PLENControlServerAPI = (function () {
     function PLENControlServerAPI(_$jquery) {
+        var _this = this;
         this._$jquery = _$jquery;
         this._state = SERVER_STATE.DISCONNECTED;
         this._socket = null;
         this._ip_addr = 'localhost:17264';
         this.connect();
+        this._$jquery(window).on('beforeunload', function () { _this.disconnect(); });
     }
     PLENControlServerAPI.prototype.connect = function (success_callback) {
         var _this = this;
@@ -231,18 +233,34 @@ var PLENControlServerAPI = (function () {
     plen_extension.slot_right_turn = function () { return 72; };
     plen_extension.slot_left_kick = function () { return 23; };
     plen_extension.slot_right_kick = function () { return 25; };
-    var descriptor = {
-        blocks: [
-            [' ', 'Connect', 'connect'],
-            [' ', 'Reserve to play slot %n', 'push', 0],
-            [' ', 'Play all', 'pop'],
-            [' ', 'Stop to play any motion', 'stop'],
-            ['r', 'Slot: Step to forward', 'slot_forward'],
-            ['r', 'Slot: Turn to left', 'slot_left_turn'],
-            ['r', 'Slot: Turn to right', 'slot_right_turn'],
-            ['r', 'Slot: Left kick', 'slot_left_kick'],
-            ['r', 'Slot: Right kick', 'slot_right_kick']
-        ]
+    var descriptors = {
+        'en': {
+            blocks: [
+                [' ', 'Connect', 'connect'],
+                [' ', 'Reserve to play slot %n', 'push', 0],
+                [' ', 'Play all', 'pop'],
+                [' ', 'Stop to play any motion', 'stop'],
+                ['r', 'Slot: Step to forward', 'slot_forward'],
+                ['r', 'Slot: Turn to left', 'slot_left_turn'],
+                ['r', 'Slot: Turn to right', 'slot_right_turn'],
+                ['r', 'Slot: Left kick', 'slot_left_kick'],
+                ['r', 'Slot: Right kick', 'slot_right_kick']
+            ]
+        },
+        'ja': {
+            blocks: [
+                [' ', '接続 (せつぞく)', 'connect'],
+                [' ', 'モーション %n 番のプレイを予約 (よやく)', 'push', 0],
+                [' ', 'モーションを全てプレイ', 'pop'],
+                [' ', 'モーションを停止', 'stop'],
+                ['r', '数字: 前進', 'slot_forward'],
+                ['r', '数字: 左を向く', 'slot_left_turn'],
+                ['r', '数字: 右を向く', 'slot_right_turn'],
+                ['r', '数字: 左足でける', 'slot_left_kick'],
+                ['r', '数字: 右足でける', 'slot_right_kick']
+            ]
+        }
     };
-    ScratchExtensions.register('PLEN', descriptor, plen_extension);
+    var descriptor = descriptors[navigator.language];
+    ScratchExtensions.register('PLEN', (descriptor) ? descriptor : descriptors['en'], plen_extension);
 })({});

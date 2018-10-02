@@ -58,22 +58,41 @@ declare var ScratchExtensions: any;
     plen_extension.slot_right_kick = () => { return 25; };
 
     // Block and block menu descriptions.
-    var descriptor: any = {
-        blocks: [
-            // [<BLOCK_TYPE>, <BLOCK_NAME>, <FUNCTION_NAME>, <DEFAULT_ARGUMENT>...]
-            // s.a. https://github.com/LLK/scratchx/wiki#adding-blocks
-            [' ', 'Connect',                 'connect'         ],
-            [' ', 'Reserve to play slot %n', 'push',          0],
-            [' ', 'Play all',                'pop'             ],
-            [' ', 'Stop to play any motion', 'stop'            ],
-            ['r', 'Slot: Step to forward',   'slot_forward'    ],
-            ['r', 'Slot: Turn to left',      'slot_left_turn'  ],
-            ['r', 'Slot: Turn to right',     'slot_right_turn' ],
-            ['r', 'Slot: Left kick',         'slot_left_kick'  ],
-            ['r', 'Slot: Right kick',        'slot_right_kick' ]
-        ]
+    var descriptors: any = {
+        'en': {
+            blocks: [
+                // [<BLOCK_TYPE>, <BLOCK_NAME>, <FUNCTION_NAME>, <DEFAULT_ARGUMENT>...]
+                // s.a. https://github.com/LLK/scratchx/wiki#adding-blocks
+                [' ', 'Connect',                 'connect'         ],
+                [' ', 'Reserve to play slot %n', 'push',          0],
+                [' ', 'Play all',                'pop'             ],
+                [' ', 'Stop to play any motion', 'stop'            ],
+                ['r', 'Slot: Step to forward',   'slot_forward'    ],
+                ['r', 'Slot: Turn to left',      'slot_left_turn'  ],
+                ['r', 'Slot: Turn to right',     'slot_right_turn' ],
+                ['r', 'Slot: Left kick',         'slot_left_kick'  ],
+                ['r', 'Slot: Right kick',        'slot_right_kick' ]
+            ]
+        },
+        'ja': {
+            blocks: [
+                // [<BLOCK_TYPE>, <BLOCK_NAME>, <FUNCTION_NAME>, <DEFAULT_ARGUMENT>...]
+                // s.a. https://github.com/LLK/scratchx/wiki#adding-blocks
+                [' ', '接続 (せつぞく)',                         'connect'         ],
+                [' ', 'モーション %n 番のプレイを予約 (よやく)', 'push',          0],
+                [' ', 'モーションを全てプレイ',                  'pop'             ],
+                [' ', 'モーションを停止',                        'stop'            ],
+                ['r', '数字: 前進',                              'slot_forward'    ],
+                ['r', '数字: 左を向く',                          'slot_left_turn'  ],
+                ['r', '数字: 右を向く',                          'slot_right_turn' ],
+                ['r', '数字: 左足でける',                        'slot_left_kick'  ],
+                ['r', '数字: 右足でける',                        'slot_right_kick' ]
+            ]
+        }
     };
 
+    var descriptor: any = descriptors[navigator.language];
+
     // Register the extension.
-    ScratchExtensions.register('PLEN', descriptor, plen_extension);
+    ScratchExtensions.register('PLEN', (descriptor)? descriptor : descriptors['en'], plen_extension);
 })({});

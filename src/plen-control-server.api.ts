@@ -1,4 +1,4 @@
-/// <reference path='../typings/index.d.ts'/>
+/// <reference path="../node_modules/@types/jquery/index.d.ts"/>
 
 
 enum SERVER_STATE
@@ -19,6 +19,8 @@ class PLENControlServerAPI
     )
     {
         this.connect();
+
+        this._$jquery(window).on('beforeunload', () => { this.disconnect(); });
     }
 
     connect(success_callback = null): void
@@ -153,7 +155,7 @@ class PLENControlServerAPI
 
     pop(): void
     {
-         this._socket.send('pop')
+         this._socket.send('pop');
     }
 
     applyNative(device: string, value: number): void

@@ -17,9 +17,9 @@ Scratch X plugin to operate PLEN series robots.
 ## Getting Started with the Development
 
 1. Clone or fork this repository.
-2. Run `npm install` and `typings install` command.
+2. Run `npm install` command.
 3. Update `src/index.ts`.
-4. Run `tsc` command at `git-root`.
+4. Run `npm run build` command at `git-root`.
 5. Debugging process is shown as below:
     - Change directory `git-root` of this repository.
     - Run any local HTTP server such as `python -m SimpleHTTPServer <PORT_NUMBER>`.
@@ -28,10 +28,9 @@ Scratch X plugin to operate PLEN series robots.
 
 ## Build Environment
 
-- node.js v5.12.0
-- npm v3.8.6
+- node.js v8.10.0
+- npm v5.6.0
 - typescript v1.8.10
-- typings v1.3.2
 
 
 ## Copyright (c) 2016,
